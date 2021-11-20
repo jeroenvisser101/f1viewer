@@ -92,6 +92,16 @@ func (s *UIState) v2PerspectiveNodes(v f1tv.ContentContainer) []*tview.TreeNode 
 		meta2 := meta
 		meta2.PerspectiveTitle = p.PrettyName()
 
+		meta2.DriverData = cmd.DriverData{
+			DriverNumber:    int64(p.RacingNumber),
+			Title:           p.Title,
+			FirstName:       p.DriverFirstName,
+			LastName:        p.DriverLastName,
+			TeamName:        p.TeamName,
+			Color:           p.Hex,
+			BackgroundColor: util.GetContrastBackground(p.Hex),
+		}
+
 		color := util.HexStringToColor(p.Hex)
 		if p.Hex == "" || s.cfg.DisableTeamColors {
 			color = activeTheme.ItemNodeColor
@@ -141,16 +151,27 @@ func (s *UIState) v2MultiCommandNodes(perspectives []f1tv.AdditionalStream, main
 			}
 
 			var urlFunc func() (string, error)
+			var driverData cmd.DriverData
 			if mainFeed != nil {
 				urlFunc = func() (string, error) { return s.v2.GetPlaybackURL(f1tv.BIG_SCREEN_HLS, mainStream.Metadata.ContentID) }
 			} else {
+				driverData = cmd.DriverData{
+					DriverNumber:    int64(perspective.RacingNumber),
+					Title:           perspective.Title,
+					FirstName:       perspective.DriverFirstName,
+					LastName:        perspective.DriverLastName,
+					TeamName:        perspective.TeamName,
+					Color:           perspective.Hex,
+					BackgroundColor: util.GetContrastBackground(perspective.Hex),
+				}
 				urlFunc = func() (string, error) {
 					return s.v2.GetPerspectivePlaybackURL(f1tv.BIG_SCREEN_HLS, perspective.PlaybackURL)
 				}
 			}
+
 			// If we have a match, run the given command!
 			context := cmd.CommandContext{
-				MetaData:      cmd.MetaData{PerspectiveTitle: multi.Title},
+				MetaData:      cmd.MetaData{PerspectiveTitle: multi.Title, DriverData: driverData},
 				CustomOptions: s.cmd.GetCommand(target),
 				URL:           urlFunc,
 			}

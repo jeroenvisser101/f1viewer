@@ -59,6 +59,7 @@ type CommandContext struct {
 
 // MetaData contains title metadata
 type MetaData struct {
+	DriverData       DriverData
 	PerspectiveTitle string
 	Event            string
 	Category         string
@@ -73,6 +74,16 @@ type MetaData struct {
 	Circuit          string
 
 	Source interface{}
+}
+
+type DriverData struct {
+	DriverNumber    int64
+	Title           string
+	FirstName       string
+	LastName        string
+	TeamName        string
+	Color           string
+	BackgroundColor string
 }
 
 func NewStore(customCommands []Command, multiCommands []MultiCommand, lang string, logger util.Logger, accentColor tcell.Color) *Store {
@@ -189,6 +200,13 @@ func (s *Store) RunCommand(cc CommandContext) error {
 		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$session", cc.MetaData.Session)
 		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$event", cc.MetaData.Event)
 		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$perspective", cc.MetaData.PerspectiveTitle)
+		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$driver_number", strconv.FormatInt(cc.MetaData.DriverData.DriverNumber, 10))
+		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$driver_title", cc.MetaData.DriverData.Title)
+		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$driver_first_name", cc.MetaData.DriverData.FirstName)
+		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$driver_last_name", cc.MetaData.DriverData.LastName)
+		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$driver_team_name", cc.MetaData.DriverData.TeamName)
+		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$driver_color", cc.MetaData.DriverData.Color)
+		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$driver_bg_color", cc.MetaData.DriverData.BackgroundColor)
 		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$category", cc.MetaData.Category)
 		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$episodenumber", strconv.FormatInt(cc.MetaData.EpisodeNumber, 10))
 		tmpCommand[i] = strings.ReplaceAll(tmpCommand[i], "$season", cc.MetaData.Year)

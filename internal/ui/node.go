@@ -69,7 +69,7 @@ func getMetadata(node *tview.TreeNode) (*NodeMetadata, error) {
 	case *NodeMetadata:
 		return v, nil
 	default:
-		return &NodeMetadata{}, fmt.Errorf("Node has reference of unexpected type %T", v)
+		return &NodeMetadata{}, fmt.Errorf("node has reference of unexpected type %T", v)
 	}
 }
 
